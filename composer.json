@@ -1,0 +1,28 @@
+{
+    "name": "elfcms/simplebox",
+    "description": "",
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Maxim Klassen",
+            "email": "maximklassen@mail.de"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "elfcms/basic": "^0.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Elfcms\\Simplebox\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Elfcms\\Simplebox\\Providers\\ElfSimpleboxProvider"
+            ]
+        }
+    }
+}
