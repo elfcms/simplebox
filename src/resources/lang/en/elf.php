@@ -17,4 +17,8 @@ return [
     'item_edited_successfully' => 'Ttem edited successfully',
     'error_of_item_edited' => 'Error of item editing',
     'simplebox' => 'SimpleBox',
+    'option' => 'Option',
+    'options' => 'Options',
+    'type' => 'Type',
+    'types' => 'Types',
 ];
