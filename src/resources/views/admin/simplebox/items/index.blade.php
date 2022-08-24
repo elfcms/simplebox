@@ -1,6 +1,6 @@
-@extends('basic::admin.layouts.blog')
+@extends('simplebox::admin.layouts.simplebox')
 
-@section('blogpage-content')
+@section('simpleboxpage-content')
 
     @if (Session::has('sbitemdeleted'))
     <div class="alert alert-alternate">{{ Session::get('sbitemdeleted') }}</div>
