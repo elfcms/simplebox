@@ -13,7 +13,7 @@ composer require elfcms/simplebox
 
 Create a new Laravel project
 ```sh
-composer create-project laravel/laravel your-project-name>
+composer create-project laravel/laravel your-project-name
 ```
 
 Set up a database connection in a file .env
