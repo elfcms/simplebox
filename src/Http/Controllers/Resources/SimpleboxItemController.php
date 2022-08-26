@@ -5,6 +5,7 @@ namespace Elfcms\Simplebox\Http\Controllers\Resources;
 use App\Http\Controllers\Controller;
 use Elfcms\Simplebox\Models\SimpleboxDataType;
 use Elfcms\Simplebox\Models\SimpleboxItem;
+use Elfcms\Simplebox\Models\SimpleboxItemOption;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -77,7 +78,7 @@ class SimpleboxItemController extends Controller
         $validated = $request->validate([
             'title' => 'required',
             'code' => 'required|unique:Elfcms\Simplebox\Models\SimpleboxItem,code',
-            'image' => 'nullable|file|max:512',
+            'image' => 'nullable|file|max:2024',
         ]);
 
         $image_path = '';
@@ -93,7 +94,7 @@ class SimpleboxItemController extends Controller
 
         if ($item && !empty($request->options_new)) {
             foreach ($request->options_new as $i => $param) {
-                if (empty($param['type']) || empty($param['name'])) {
+                if (!empty($param['deleted']) || empty($param['type']) || empty($param['name'])) {
                     continue;
                 }
                 $optionData = [
@@ -122,14 +123,13 @@ class SimpleboxItemController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\SimpleboxItem  $simpleboxItem
+     * @param  \App\Models\SimpleboxItem  $item
      * @return \Illuminate\Http\Response
      */
-    public function edit(SimpleboxItem $simpleboxItem)
+    public function edit(SimpleboxItem $item)
     {
-        dd($simpleboxItem);
         $data_types = SimpleboxDataType::all();
-        $next_option_id = $simpleboxItem->options->max();
+        $next_option_id = $item->options->max('id');
         if (empty($next_option_id)) {
             $next_option_id = 0;
         }
@@ -138,10 +138,10 @@ class SimpleboxItemController extends Controller
         }
         return view('simplebox::admin.simplebox.items.edit',[
             'page' => [
-                'title' => __('simplebox::elf.simplebox') . ' ' . __('simplebox::elf.item') . '#' . $simpleboxItem->id,
+                'title' => __('simplebox::elf.simplebox') . ' ' . __('simplebox::elf.item') . '#' . $item->id,
                 'current' => url()->current(),
             ],
-            'item' => $simpleboxItem,
+            'item' => $item,
             'next_option_id' => $next_option_id,
             'data_types' => $data_types
         ]);
@@ -154,9 +154,66 @@ class SimpleboxItemController extends Controller
      * @param  \App\Models\SimpleboxItem  $simpleboxItem
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, SimpleboxItem $simpleboxItem)
+    public function update(Request $request, SimpleboxItem $item)
     {
-        //
+        $request->merge([
+            'code' => Str::slug($request->code),
+        ]);
+        $validated = $request->validate([
+            'title' => 'required',
+            'code' => 'required',//|unique:Elfcms\Simplebox\Models\SimpleboxItem,code',
+            'image' => 'nullable|file|max:1024',
+        ]);
+        if (SimpleboxItem::where('code',$request->code)->where('id','<>',$item->id)->first()) {
+            return redirect(route('admin.simplebox.item.edit',$item->id))->withErrors([
+                'code' => __('simplebox::elf.item_already_exists')
+            ]);
+        }
+        $image_path = $request->image_path;
+        if (!empty($request->file()['image'])) {
+            $image = $request->file()['image']->store('public/simplebox/items/image');
+            $image_path = str_ireplace('public/','/storage/',$image);
+        }
+
+        $item->code = $request->code;
+        $item->title = $request->title;
+        $item->image = $image_path;
+        $item->text = $request->text;
+
+        if (!empty($request->options_exist)) {
+            foreach ($request->options_exist as $oid => $param) {
+                if (!empty($param['deleted']) && $oid > 0) {
+                    $item->options()->find($oid)->delete();
+                    continue;
+                }
+                $option = SimpleboxItemOption::find($oid);
+                if ($option) {
+                    $option->value = $param['value'];
+                    $option->name = $param['name'];
+                    $option->data_type_id = $param['type'];
+                    $option->save();
+                }
+            }
+        }
+
+        if (!empty($request->options_new)) {
+            foreach ($request->options_new as $i => $param) {
+                if (!empty($param['deleted']) || (empty($param['value']) && empty($param['text']))) {
+                    continue;
+                }
+                $optionData = [
+                    'value' => $param['value'],
+                    'name' => $param['name'],
+                    'data_type_id' => $param['type'],
+                ];
+                $item->options()->create($optionData);
+            }
+        }
+
+        $item->save();
+
+        return redirect(route('admin.simplebox.items.edit',$item->id))->with('itemedited',__('simplebox::elf.item_edited_successfully'));
+
     }
 
     /**

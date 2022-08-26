@@ -17,8 +17,14 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('item_id')->unsigned();
             $table->foreign('item_id')->references('id')->on('simplebox_items')->constrained()->onDelete('cascade');
-            $table->bigInteger('option_id')->unsigned();
-            $table->foreign('option_id')->references('id')->on('simplebox_options')->constrained()->onDelete('cascade');
+            $table->bigInteger('data_type_id')->unsigned();
+            $table->foreign('data_type_id')->references('id')->on('simplebox_data_types')->constrained()->onDelete('cascade');
+            $table->string('name');
+            $table->text('value')->nullable();
+            $table->bigInteger('value_int')->nullable();
+            $table->float('value_float')->nullable();
+            $table->date('value_date')->nullable();
+            $table->dateTime('value_datetime')->nullable();
             $table->timestamps();
         });
     }

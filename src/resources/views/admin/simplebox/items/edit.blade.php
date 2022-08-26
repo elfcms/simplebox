@@ -20,14 +20,14 @@
 
     <div class="item-form">
         <h3>{{ __('simplebox::elf.edit_item') }} {{$item->id}}</h3>
-        <form action="{{ route('admin.simplebox.items.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('admin.simplebox.items.update',$item->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
-            @method('POST')
+            @method('PUT')
             <div class="colored-rows-box">
                 <div class="input-box colored">
                     <label for="code">{{ __('basic::elf.code') }}</label>
                     <div class="input-wrapper">
-                        <input type="text" name="code" id="code" autocomplete="off" data-isslug value="{{ $item->code }}">
+                        <input type="text" name="code" id="code" data-isslug value="{{ $item->code }}">
                     </div>
                     <div class="input-wrapper">
                         <div class="autoslug-wrapper">
@@ -39,7 +39,7 @@
                 <div class="input-box colored">
                     <label for="title">{{ __('basic::elf.title') }}</label>
                     <div class="input-wrapper">
-                        <input type="text" name="title" id="title" autocomplete="off" value="{{ $item->title }}">
+                        <input type="text" name="title" id="title" value="{{ $item->title }}">
                     </div>
                 </div>
                 <div class="input-box colored">
@@ -87,41 +87,47 @@
                                     <div class="options-table-head">
                                         {{ __('basic::elf.value') }}
                                     </div>
-                                    <div class="options-table-head"></div>
+                                    <div class="options-table-head">
+                                        {{ __('basic::elf.delete') }}
+                                    </div>
                                 </div>
                                 @foreach ($item->options as $option)
                                 <div class="options-table-string-line" data-line="{{$option->id}}">
                                     <div class="options-table-string">
-                                        <select name="options_new[{{$option->id}}][type]" id="option_new_type_{{$option->id}}" data-option-type>
+                                        <select name="options_exist[{{$option->id}}][type]" id="option_exist_type_{{$option->id}}" data-option-type>
                                         @foreach ($data_types as $type)
                                             <option value="{{ $type->id }}" @if($type->id == $option->data_type_id) selected @endif>{{ $type->name }}</option>
                                         @endforeach
                                         </select>
                                     </div>
                                     <div class="options-table-string">
-                                        <input type="text" name="options_new[{{$option->id}}][name]" id="option_new_name_{{$option->id}}" data-option-name data-isslug>
+                                        <input type="text" name="options_exist[{{$option->id}}][name]" id="option_exist_name_{{$option->id}}" data-option-name data-isslug value="{{ $option->name }}">
                                     </div>
                                     <div class="options-table-string">
-                                        <input type="text" name="options_new[{{$option->id}}][value]" id="option_new_value_{{$option->id}}" data-option-value>
+                                        <input type="text" name="options_exist[{{$option->id}}][value]" id="option_exist_value_{{$option->id}}" data-option-value value="{{ $option->value }}">
                                     </div>
-                                    <div class="options-table-string"></div>
+                                    <div class="options-table-string">
+                                        <input type="checkbox" name="options_exist[{{ $option->id }}][deleted]" id="options_exist_disabled_{{ $option->id }}" data-option-deleted>
+                                    </div>
                                 </div>
                                 @endforeach
-                                <div class="options-table-string-line" data-line="{{$next_option_id}}">
+                                <div class="options-table-string-line" data-line="0">
                                     <div class="options-table-string">
-                                        <select name="options_new[{{$next_option_id}}][type]" id="option_new_type_{{$next_option_id}}" data-option-type>
+                                        <select name="options_new[0][type]" id="option_new_type_0" data-option-type>
                                         @foreach ($data_types as $type)
                                             <option value="{{ $type->id }}">{{ $type->name }}</option>
                                         @endforeach
                                         </select>
                                     </div>
                                     <div class="options-table-string">
-                                        <input type="text" name="options_new[{{$next_option_id}}][name]" id="option_new_name_{{$next_option_id}}" data-option-name data-isslug>
+                                        <input type="text" name="options_new[0][name]" id="option_new_name_0" data-option-name data-isslug>
                                     </div>
                                     <div class="options-table-string">
-                                        <input type="text" name="options_new[{{$next_option_id}}][value]" id="option_new_value_{{$next_option_id}}" data-option-value>
+                                        <input type="text" name="options_new[0][value]" id="option_new_value_0" data-option-value>
                                     </div>
-                                    <div class="options-table-string"></div>
+                                    <div class="options-table-string">
+                                        <input type="checkbox" name="options_new[0][deleted]" id="option_new_disabled_0" data-option-deleted>
+                                    </div>
                                 </div>
                             </div>
                             <button type="button" class="default-btn option-table-add" id="addoptionline">{{ __('basic::elf.add_option') }}</button>
@@ -143,7 +149,7 @@
     }
 
 
-simpleboxOptionInit({{$next_option_id}});
+simpleboxOptionInit();
     </script>
 
 @endsection

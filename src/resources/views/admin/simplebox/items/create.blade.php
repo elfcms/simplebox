@@ -76,7 +76,9 @@
                                     <div class="options-table-head">
                                         {{ __('basic::elf.value') }}
                                     </div>
-                                    <div class="options-table-head"></div>
+                                    <div class="options-table-head">
+                                        {{ __('basic::elf.delete') }}
+                                    </div>
                                 </div>
                                 <div class="options-table-string-line" data-line="0">
                                     <div class="options-table-string">
@@ -92,7 +94,9 @@
                                     <div class="options-table-string">
                                         <input type="text" name="options_new[0][value]" id="option_new_value_0" data-option-value>
                                     </div>
-                                    <div class="options-table-string"></div>
+                                    <div class="options-table-string">
+                                        <input type="checkbox" name="options_new[0][deleted]" id="option_new_disabled_0" data-option-deleted>
+                                    </div>
                                 </div>
                             </div>
                             <button type="button" class="default-btn option-table-add" id="addoptionline">{{ __('basic::elf.add_option') }}</button>

@@ -35,7 +35,9 @@ function simpleboxOptionInit(addSelector = '#addoptionline', line = 0) {
                 <div class="options-table-string">
                     <input type="text" name="options_new[${optionNextLine}][value]" id="option_new_value_${optionNextLine}" data-option-value>
                 </div>
-                <div class="options-table-string"></div>
+                <div class="options-table-string">
+                    <input type="checkbox" name="options_new[${optionNextLine}][deleted]" id="option_new_disabled_${optionNextLine}" data-option-deleted>
+                </div>
             </div>
             `
             if (lastLine) {

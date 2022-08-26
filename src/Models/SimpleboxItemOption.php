@@ -11,8 +11,19 @@ class SimpleboxItemOption extends Model
 
     protected $fillable = [
         'item_id',
-        'option_id',
+        'data_type_id',
+        'name',
+        'value',
+        'value_int',
+        'value_float',
+        'value_date',
+        'value_datetime',
     ];
 
-    protected $table = 'simplebox_item_options';
+    //protected $table = 'simplebox_item_options';
+
+    public function items()
+    {
+        return $this->belongsTo(SimpleboxItem::class, 'item_id');
+    }
 }

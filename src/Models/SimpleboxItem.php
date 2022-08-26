@@ -18,6 +18,6 @@ class SimpleboxItem extends Model
 
     public function options()
     {
-        return $this->belongsToMany(SimpleboxOption::class, 'simplebox_item_options', 'item_id', 'option_id');
+        return $this->hasMany(SimpleboxItemOption::class, 'item_id');
     }
 }
