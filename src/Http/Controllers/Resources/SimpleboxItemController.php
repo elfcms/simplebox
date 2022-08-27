@@ -97,10 +97,16 @@ class SimpleboxItemController extends Controller
                 if (!empty($param['deleted']) || empty($param['type']) || empty($param['name'])) {
                     continue;
                 }
+                $typeCode = SimpleboxDataType::find($param['type']);
+                $typeCodes = ['int','float','date','datetime'];
+                $type = '';
+                if (!empty($typeCode) && !empty($typeCode->code) && in_array($typeCode->code,$typeCodes)) {
+                    $type = '_' . $typeCode->code;
+                }
                 $optionData = [
                     'name' => $param['name'],
                     'data_type_id' => $param['type'],
-                    'value' => $param['value'],
+                    'value'.$type => $param['value'],
                 ];
                 $item->options()->create($optionData);
             }
@@ -112,10 +118,10 @@ class SimpleboxItemController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\SimpleboxItem  $simpleboxItem
+     * @param  \App\Models\SimpleboxItem  $item
      * @return \Illuminate\Http\Response
      */
-    public function show(SimpleboxItem $simpleboxItem)
+    public function show(SimpleboxItem $item)
     {
         //
     }
@@ -136,6 +142,7 @@ class SimpleboxItemController extends Controller
         else {
             $next_option_id++;
         }
+        $typeCodes = ['int','float','date','datetime'];
         return view('simplebox::admin.simplebox.items.edit',[
             'page' => [
                 'title' => __('simplebox::elf.simplebox') . ' ' . __('simplebox::elf.item') . '#' . $item->id,
@@ -143,7 +150,8 @@ class SimpleboxItemController extends Controller
             ],
             'item' => $item,
             'next_option_id' => $next_option_id,
-            'data_types' => $data_types
+            'data_types' => $data_types,
+            'type_codes' => $typeCodes
         ]);
     }
 
@@ -151,7 +159,7 @@ class SimpleboxItemController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\SimpleboxItem  $simpleboxItem
+     * @param  \App\Models\SimpleboxItem  $item
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, SimpleboxItem $item)
@@ -180,15 +188,22 @@ class SimpleboxItemController extends Controller
         $item->image = $image_path;
         $item->text = $request->text;
 
+        $typeCodes = ['int','float','date','datetime'];
+
         if (!empty($request->options_exist)) {
             foreach ($request->options_exist as $oid => $param) {
                 if (!empty($param['deleted']) && $oid > 0) {
                     $item->options()->find($oid)->delete();
                     continue;
                 }
+                $typeCode = SimpleboxDataType::find($param['type']);
+                $type = '';
+                if (!empty($typeCode) && !empty($typeCode->code) && in_array($typeCode->code,$typeCodes)) {
+                    $type = '_' . $typeCode->code;
+                }
                 $option = SimpleboxItemOption::find($oid);
                 if ($option) {
-                    $option->value = $param['value'];
+                    $option['value'.$type] = $param['value'];
                     $option->name = $param['name'];
                     $option->data_type_id = $param['type'];
                     $option->save();
@@ -201,8 +216,13 @@ class SimpleboxItemController extends Controller
                 if (!empty($param['deleted']) || (empty($param['value']) && empty($param['text']))) {
                     continue;
                 }
+                $typeCode = SimpleboxDataType::find($param['type']);
+                $type = '';
+                if (!empty($typeCode) && !empty($typeCode->code) && in_array($typeCode->code,$typeCodes)) {
+                    $type = '_' . $typeCode->code;
+                }
                 $optionData = [
-                    'value' => $param['value'],
+                    'value'.$type => $param['value'],
                     'name' => $param['name'],
                     'data_type_id' => $param['type'],
                 ];
@@ -219,11 +239,15 @@ class SimpleboxItemController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\SimpleboxItem  $simpleboxItem
+     * @param  \App\Models\SimpleboxItem  $item
      * @return \Illuminate\Http\Response
      */
-    public function destroy(SimpleboxItem $simpleboxItem)
+    public function destroy(SimpleboxItem $item)
     {
-        //
+        if (!$item->delete()) {
+            return redirect(route('admin.simplebox.items'))->withErrors(['itemdelerror'=>__('simplebox::elf.error_of_item_deleting')]);
+        }
+
+        return redirect(route('admin.simplebox.items'))->with('itemdeleted',__('simplebox::elf.item_deleted_successfully'));
     }
 }

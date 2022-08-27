@@ -17,6 +17,8 @@ return [
     'item_edited_successfully' => 'Item edited successfully',
     'error_of_item_edited' => 'Error of item editing',
     'item_already_exists' => 'Item already exists',
+    'error_of_item_deleting' => 'Error of item deleting',
+    'item_deleted_successfully' => 'Item deleted successfully',
     'simplebox' => 'SimpleBox',
     'option' => 'Option',
     'options' => 'Options',

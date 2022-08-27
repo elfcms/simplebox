@@ -26,4 +26,31 @@ class SimpleboxItemOption extends Model
     {
         return $this->belongsTo(SimpleboxItem::class, 'item_id');
     }
+
+    public function getValueAttribute($value)
+    {
+        $typeCode = SimpleboxDataType::find($this->data_type_id);
+        switch ($typeCode->code) {
+            case 'int':
+                $value = $this->value_int;
+                break;
+
+            case 'float':
+                $value = $this->value_float;
+                break;
+
+            case 'date':
+                $value = $this->value_date;
+                break;
+
+            case 'datetime':
+                $value = $this->value_datetime;
+                break;
+
+            default:
+                //
+                break;
+        }
+        return $value;
+    }
 }
