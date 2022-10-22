@@ -39,6 +39,7 @@ return [
             "route" => "admin.simplebox.items",
             "parent_route" => "admin.simplebox.items",
             "icon" => "/vendor/elfcms/simplebox/admin/images/icons/box.png",
+            "position" => 90,
             "submenu" => []
         ],
     ],
