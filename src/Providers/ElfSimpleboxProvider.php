@@ -87,5 +87,9 @@ class ElfSimpleboxProvider extends ServiceProvider
         $router->middlewareGroup('cookie', array(
             CookieCheck::class
         ));
+
+        $this->loadViewComponentsAs('elfcms-simplebox', [
+            'box' => \Elfcms\Simplebox\View\Components\Box::class,
+        ]);
     }
 }

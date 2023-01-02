@@ -27,6 +27,11 @@ class SimpleboxItemOption extends Model
         return $this->belongsTo(SimpleboxItem::class, 'item_id');
     }
 
+    public function datatypes()
+    {
+        return $this->belongsTo(SimpleboxDataType::class, 'data_type_id', 'id', 'data_types');
+    }
+
     public function getValueAttribute($value)
     {
         $typeCode = SimpleboxDataType::find($this->data_type_id);

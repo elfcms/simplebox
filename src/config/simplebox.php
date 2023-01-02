@@ -10,7 +10,7 @@ return [
     |
     */
 
-    'version' => '0.4',
+    'version' => '0.5',
 
     /*
     |--------------------------------------------------------------------------
@@ -21,7 +21,7 @@ return [
     |
     */
 
-    'basic_package' => '1.1.0',
+    'basic_package' => '1.2.0',
 
     /*
     |--------------------------------------------------------------------------
@@ -41,6 +41,16 @@ return [
             "icon" => "/vendor/elfcms/simplebox/admin/images/icons/box.png",
             "position" => 90,
             "submenu" => []
+        ],
+    ],
+
+    'components' => [
+        'box' => [
+            'class' => '\Elfcms\Simplebox\View\Components\Box',
+            'options' => [
+                'item' => false,
+                'theme' => 'default',
+            ],
         ],
     ],
 ];
